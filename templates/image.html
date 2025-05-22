@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Object Detection - Video Upload</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .container {
+      text-align: center;
+    }
+    video {
+      max-width: 50%;
+      margin-top: 20px;
+    }
+    #upload-form {
+      margin: 20px 0;
+    }
+    #download-link {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #4CAF50;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Upload a Video for Object Detection</h1>
+    <form id="upload-form" method="post" enctype="multipart/form-data">
+      <input type="file" id="video" name="video" accept="video/*" required>
+      <br><br>
+      <button type="submit">Upload and Process</button>
+    </form>
+
+    <h2>Processed Video:</h2>
+    <video id="output-video" controls></video>
+    <br>
+    <a id="download-link" style="display:none;" download>Download Processed Video</a>
+  </div>
+
+  <script>
+    document.getElementById('upload-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const response = await fetch('/object-detection/', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const videoUrl = URL.createObjectURL(blob);
+        
+        const videoElement = document.getElementById('output-video');
+        videoElement.src = videoUrl;
+        
+        const downloadLink = document.getElementById('download-link');
+        downloadLink.href = videoUrl;
+        downloadLink.style.display = 'inline-block';
+        downloadLink.download = 'detected_' + document.getElementById('video').files[0].name;
+      } else {
+        alert('Error processing video: ' + (await response.text()));
+      }
+    });
+  </script>
+</body>
+</html>
