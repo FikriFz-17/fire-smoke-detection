@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Detection - Live</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #60a5fa;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h1 svg {
+            color: var(--primary);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--card-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.offline {
+            background-color: var(--danger);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .video-container {
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            position: relative;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .video-feed {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .camera-off-message {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(15, 23, 42, 0.9);
+            color: var(--text);
+            font-size: 1.25rem;
+            font-weight: 500;
+            gap: 1rem;
+        }
+
+        .camera-off-message svg {
+            color: var(--text-secondary);
+            width: 48px;
+            height: 48px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            background-color: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: var(--border);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #0da271;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-dark);
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .info-panel {
+            margin-top: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .info-panel h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .detection-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .detection-item {
+            background-color: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .video-container {
+                width: 100%;
+            }
+            
+            .video-feed {
+                width: 100%;
+                height: auto;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 8V4a2 2 0 0 1 2-2h8.5L20 7.5V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <circle cx="6" cy="14" r="3"></circle>
+                    <path d="M13 18.7a9 9 0 0 0-7.5-10.6"></path>
+                </svg>
+                Live Object Detection
+            </h1>
+            <div class="status">
+                <div class="status-indicator" id="status-indicator"></div>
+                <span id="status-text">Live</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="video-container">
+                <img src="{{ url_for('video_feed') }}" width="640" height="480" class="video-feed">
+                <div class="camera-off-message" id="camera-off-message">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18.36 6.64A9 9 0 0 1 20.77 15"></path>
+                        <path d="M6.16 6.16a9 9 0 1 0 12.68 12.68"></path>
+                        <path d="M12 2v2"></path>
+                        <path d="m2 2 20 20"></path>
+                        <path d="M2 12h2"></path>
+                        <path d="M12 20v2"></path>
+                        <path d="M20 12h2"></path>
+                    </svg>
+                    <p>Camera is turned off</p>
+                    <p class="text-secondary" style="font-size: 0.875rem; color: var(--text-secondary);">Click "Turn On Camera" to resume</p>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-success" id="camera-on">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 7v10"></path>
+                        <rect width="15" height="14" x="1" y="5" rx="2"></rect>
+                        <path d="M16 2v20"></path>
+                    </svg>
+                    Turn On Camera
+                </button>
+                <button class="btn btn-danger" id="camera-off">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 16v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"></path>
+                        <path d="m21 12-7-5v10z"></path>
+                    </svg>
+                    Turn Off Camera
+                </button>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2025 Object Detection System | Powered by Computer Vision</p>
+        </footer>
+    </div>
+
+    <script>
+        const videoFeed = document.querySelector('.video-feed');
+        const btnOn = document.querySelector('#camera-on');
+        const btnOff = document.querySelector('#camera-off');
+        const statusIndicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+        const cameraOffMessage = document.getElementById('camera-off-message');
+
+        let streamActive = true;
+        const videoUrl = "{{ url_for('video_feed') }}";
+
+        btnOff.addEventListener('click', () => {
+            if (streamActive) {
+                videoFeed.src = ''; // stop stream
+                streamActive = false;
+                
+                // Update status
+                statusIndicator.classList.add('offline');
+                statusText.textContent = 'Offline';
+                
+                // Show camera off message
+                cameraOffMessage.style.display = 'flex';
+            }
+        });
+
+        btnOn.addEventListener('click', () => {
+            if (!streamActive) {
+                videoFeed.src = videoUrl; // start stream
+                streamActive = true;
+                
+                // Update status
+                statusIndicator.classList.remove('offline');
+                statusText.textContent = 'Live';
+                
+                // Hide camera off message
+                cameraOffMessage.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>

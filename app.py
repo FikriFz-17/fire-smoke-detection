@@ -10,16 +10,17 @@ import os
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads/'
+camera_on = False
 
 class Detection:
     def __init__(self):
         self.model = YOLO(r"models/best.pt")
         self.class_names = self.model.names
 
-    def predict(self, img, conf=0.5):
+    def predict(self, img, conf=0.25):
         return self.model.predict(img, conf=conf)
 
-    def predict_and_detect(self, img, conf=0.5, rectangle_thickness=2, text_thickness=1):
+    def predict_and_detect(self, img, conf=0.25, rectangle_thickness=2, text_thickness=1):
         results = self.predict(img, conf=conf)
 
         for result in results:
@@ -56,7 +57,7 @@ detection = Detection()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('live.html')
 
 def gen_frames():
     cap = cv2.VideoCapture(0)
