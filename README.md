@@ -17,7 +17,7 @@ My Teammate:
 ### Clone this repository
 
 ```bash
-git clone https://github.com/FikriFz-17/booking-hotel.git
+git clone https://github.com/FikriFz-17/fire-smoke-detection.git
 ```
 
 ### Run
