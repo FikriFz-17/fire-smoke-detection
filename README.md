@@ -7,14 +7,10 @@ My Teammate:
 - Hafidz Kamaludin Abdillah
 - Fikri Fauzi
 
-### Confusion Matrix
-
-
-### F1-Score
-
-
-### Precision-Recall
-
+### Report
+<img src="https://github.com/user-attachments/assets/876e2831-edf2-4ab6-8e9e-5f4e3deee42e" width="350" height="350" />
+<img src="https://github.com/user-attachments/assets/077c813d-29cf-4690-b312-c8a716f5e51d" width="350" height="350" />
+<img src="https://github.com/user-attachments/assets/e5c3daba-c048-44d9-8f3b-aa0beb9d4894" width="350" height="350" />
 
 ## Getting Started
 
@@ -30,4 +26,5 @@ python app.py
 ```
 
 ### Preview
+<img src="https://github.com/user-attachments/assets/91f1032f-fb1f-462d-88d5-627d418c6957" width="400" />
 
