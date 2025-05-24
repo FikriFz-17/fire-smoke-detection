@@ -30,5 +30,7 @@ python app.py
 ```
 
 ### Preview
-<img src="https://github.com/user-attachments/assets/91f1032f-fb1f-462d-88d5-627d418c6957" width="400" />
-<img src="https://github.com/user-attachments/assets/487f8523-28f6-452e-8ec4-e65ea871776a" width="400">
+<p>
+  <img src="https://github.com/user-attachments/assets/91f1032f-fb1f-462d-88d5-627d418c6957" alt="Live Object Detection" height="250px" />
+  <img src="https://github.com/user-attachments/assets/487f8523-28f6-452e-8ec4-e65ea871776a" alt="Processed Video Detection" height="250px" />
+</p>
