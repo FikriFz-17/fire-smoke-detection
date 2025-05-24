@@ -32,11 +32,11 @@ class Detection:
                 
                 # Warna berbeda untuk fire dan smoke
                 if class_name.lower() == 'fire':
-                    color = (0, 0, 255)  # Merah untuk api
+                    color = (0, 0, 255)  # untuk api
                     text_color = (255, 255, 255)  # Putih untuk teks
                 else:
-                    color = (0, 165, 255)  # Jingga untuk asap
-                    text_color = (255, 255, 255)  # Hitam untuk teks
+                    color = (0, 165, 255)  # untuk asap
+                    text_color = (255, 255, 255)  # Putih untuk teks
                 
                 # Gambar bounding box
                 cv2.rectangle(img, (x1, y1), (x2, y2), color, rectangle_thickness)

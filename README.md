@@ -14,6 +14,10 @@ My Teammate:
 
 ## Getting Started
 
+### Endpoints
+- **http://127.0.0.1:5000/** for live detection
+- **http://127.0.0.1:5000/upload** for video upload detection
+
 ### Clone this repository
 
 ```bash
@@ -27,4 +31,4 @@ python app.py
 
 ### Preview
 <img src="https://github.com/user-attachments/assets/91f1032f-fb1f-462d-88d5-627d418c6957" width="400" />
-
+<img src="https://github.com/user-attachments/assets/487f8523-28f6-452e-8ec4-e65ea871776a" width="400">
